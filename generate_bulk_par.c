@@ -1,3 +1,7 @@
+#include "generate_bulk_par.h"
+#include <assert.h>
+#include <stdio.h>
+
 generate_bulk_par(scmpar* scmparptr, linkpar* linkparptr, antpar* antparptr) {
 	int Scenario = scmparptr->Scenario;
 
@@ -156,6 +160,7 @@ float[][] fixedAoas(scmpar* scmparptr){
 			mean_aoas[3] = 115.1626;
 			mean_aoas[4] = 91.1897;
 			mean_aoas[5] = 4.6769;
+			break;
 		case URBAN_MICRO:
 			mean_aoas[0] = 0.6966;
 			mean_aoas[1] = 146.0669;
@@ -163,6 +168,7 @@ float[][] fixedAoas(scmpar* scmparptr){
 			mean_aoas[3] = -30.5485;
 			mean_aoas[4] = -11.4412;
 			mean_aoas[5] = -1.0587;
+			break;
 	}
 
 	for (int i=0; i<M; i++) {
@@ -173,7 +179,7 @@ float[][] fixedAoas(scmpar* scmparptr){
 	return aoas;
 }
 
-steps(scmpar* scmparptr, linpar* linkparptr) {
+step3(scmpar* scmparptr, linpar* linkparptr) {
 	int* MsNumber = linkparptr->MsNumber;
 	int Scenario = scmparptr->Scenario;
 	int ScmOptions = scmparptr->ScmOptions;
@@ -181,7 +187,42 @@ steps(scmpar* scmparptr, linpar* linkparptr) {
 	float Bsq[3][3] = {{0,0,0}, {0,0,0}, {0,0,0.7071}};
 	float bsq = 0.7071;
 	float C[3][3] = {{0.8997, 0.1926, -0.3917}, {0.1926, 0.8997, -0.3917}, {-0.3917, -0.3917, 0.4395}};
-	int NumofMs = (linkparptr->MsNumber)[N
+	int NumOfMs = maxint(linkparptr->MsNumber);
+	assert(NumOfMs <= 10*NumLinks);
+
+	switch Scenario {
+		case SUBURBAN_MACRO:
+			float mu_as = 0.69;
+			float epsilon_as = 0.13;
+			float mu_ds = -6.80;
+			float epsilon_ds = 0.288;
+
+			if !scmparptr->AlternativePathloss {
+				switch scmparptr->ScmOptions {
+					case NONE:
+					case POLARIZED:
+					case URBAN_CANYOU:
+						int sigma_sf_ave = 8;
+						break;
+					case LOS:
+						int sigma_sf_ave = 4;
+						printf("Warning: no SCM LOS standard deviation of shadowing is defined for suburban macro - urban micro LOS standard deviation of shadowing is used\n")
+				}
+			} else {
+				switch scmparptr->ScmOptions {
+					case NONE:
+					case POLARIZED:
+					case URBAN_CANYON:
+						int sigma_sf_ave = 10;
+						break;
+					case LOS:
+						int sigma_sf_ave = 4;
+				}
+			}
+
+			float* abc = 
+
+
 
 
 
